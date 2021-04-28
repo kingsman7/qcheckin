@@ -1,15 +1,11 @@
 const pages = config('pages') // Get Pages from config
-
 //Blog
 export default [
   {
-    title: 'qblog.sidebar.adminGroup',
-    icon: 'fab fa-home',
-    icon: 'fab fa-home',
+    title: 'qcheckin.sidebar.checkin',
+    icon: 'fas fa-stopwatch',
     children: [
-      // pages.qblog.posts, // posts setup
-      // pages.qblog.categories, // categories setup
-      // pages.qblog.postsInternal, // Post internal
+      pages.qcheckin.shiftsIndex,
     ]
   },
 ]

@@ -1,38 +1,35 @@
 <template>
-  <div id="checkinggComponent">
+  <div id="checkinComponent">
     <!--Map-->
-    <div id="mapChecking" ref="mapChecking" v-if="location.hasPermission"></div>
-
+    <open-map v-if="currentLocation" v-model="mapMarket" read-only height="200px"/>
     <!--Message map unavailable-->
     <div v-else style="height: 200px; padding: 22px 0" class="bg-grey-4 text-center">
       <div class="q-px-md">
         <q-icon color="grey-6" name="fas fa-map-marked-alt" size="80px"/>
         <div class="q-mt-md">
           <q-icon name="fas fa-exclamation-triangle" color="warning"/>
-          Permission to obtain the location was denied ... please allow it
+          {{ this.$tr('qcheckin.sidebar.locationAddress') }}
         </div>
       </div>
     </div>
-
     <!--Content-->
     <div id="chronometerContent">
       <!--Button actions chronometer-->
       <div class="text-center">
         <!--Button start chronometer-->
-        <q-btn @click="getActiveShift" round color="secondary" size="28px" v-if="!activeShift">
+        <q-btn @click="createShift" class="cursor-pointer" round color="green" size="28px" :loading="loading" v-if="!activeShift">
           <q-icon id="iconButton" name="fas fa-play" size="25px" class="q-pa-xs q-mb-xs full-width"/>
-          <label style="font-size: 12px">Start</label>
+          <label style="font-size: 12px"></label>
         </q-btn>
         <!--End shift-->
         <q-btn color="negative" class="q-mx-xs" size="28px" round :loading="loading" v-else @click="endShift">
           <q-icon id="iconButton" name="fas fa-stop" size="25px" class="q-pa-xs q-mb-xs full-width"/>
-          <label style="font-size: 12px">Stop</label>
+          <label class="cursor-pointer" style="font-size: 12px">{{ this.$tr('ui.label.close') }}</label>
         </q-btn>
       </div>
-
       <!--Shift Information-->
       <div v-if="startChronometer">
-        <div id="timer" class="q-box bg-primary text-center text-white">
+        <div id="timer" class="q-box bg-grey-4 text-center text-blue-grey">
           <!--Date-->
           <div class="q-body-1">
             {{ activeShift.checkinAt ? $trd(activeShift.checkinAt, {type: "long"}) : "" }}
@@ -42,35 +39,40 @@
             {{ time.text }}
           </div>
           <!--Line separator-->
-          <q-separator size="1px" color="white" class="q-my-xs"/>
+          <q-separator size="1px" color="blue-grey" class="q-my-xs"/>
           <!--Address-->
           <div class="q-caption">
-            <q-icon name="fas fa-map-marker-alt"/>
-            {{ location.address || 'No location available' }}
+            <q-icon name="fas fa-map-marker-alt" class="q-mr-xs"/>
+            <b>{{ locationDescription }} </b>
           </div>
         </div>
       </div>
-
+    </div>
+    <div v-if="activeShift">
       <!--Comment-->
       <div class="q-pa-md">
-        <dynamic-field v-model="comment.text" :field="fields.comments"></dynamic-field>
+        <dynamic-field v-model="comment.text" :field="fields.comments" @input="sendComment"></dynamic-field>
       </div>
-
-      <!--Actions-->
-      <div class="text-center">
-        <!--My shifts-->
-        <q-btn unelevated label="My Shifts" color="primary" class="" size="sm" rounded icon="fas fa-user-clock"/>
-        <!--Add custom shift-->
-        <q-btn v-if="false" label="Add Shift" color="positive" class="q-mx-xs" size="sm" rounded icon="fas fa-plus"/>
-      </div>
+    </div>
+    <!--Actions-->
+    <div class="text-center absolute-bottom q-my-md">
+      <!--My shifts-->
+      <q-btn unelevated color="green" rounded no-caps icon="fas fa-user-clock"
+             :to="{name : 'qcheckin.admin.shifts.index'}">
+        {{ this.$tr('qcheckin.sidebar.Shifts') }}
+      </q-btn>
     </div>
   </div>
 </template>
 <script>
+import openMap from '@imagina/qsite/_components/master/mapLeaflet'
 
 export default {
+  beforeDestroy() {
+    this.$root.$off('qcheckin.checkout')
+  },
   props: {},
-  components: {},
+  components: {openMap},
   watch: {},
   mounted() {
     this.$nextTick(function () {
@@ -84,19 +86,15 @@ export default {
   data() {
     return {
       loading: false,
-      location: {
-        pos: null,
-        address: 'No location available',
-        hasPermission: false,
-      },
-      ActiveShift: false,
+      currentLocation: false,
+      mapMarket: false,
+      activeShift: false,
       time: {
         text: "00:00:00",
         hh: 0,
         mm: 0,
         ss: 0
       },
-      activeShift: false,
       control: false,
       comment: {
         loading: false,
@@ -114,92 +112,93 @@ export default {
             label: `${this.$tr('ui.form.comment')}`,
             type: 'textarea',
             rows: "3",
-            icon: "fas fa-comment-dots"
+            icon: "fas fa-comment-dots",
+            debounce: 1500
           },
         },
       }
+    },
+    locationDescription() {
+      if (this.currentLocation)
+        return `Lat: ${this.currentLocation.latitude}, Lng: ${this.currentLocation.longitude}`
+      else return this.$tr('qcheckin.sidebar.noLocation')
     }
   },
   methods: {
     //Init
-    async init() {
-      // console.warn(config("apiRoutes.qcheckin.shifts"))
-      // await this.$helper.getCurrentPosition()
-      // this.requestCurrentLocation()
-      await this.getActiveShift()
-      // await this.startChronometer()
+    init() {
+      this.getActiveShift()
+      this.getCurrentLocation()
+      //Listen checkout
+      this.$root.$on('qcheckin.checkout', (item) => {
+        if (item.id == this.activeShift.id) this.endShift()
+      })
     },
-    //Get current position
-    // requestCurrentLocation() {
-    //   return new Promise((resolve, reject) => {
-    //     if (navigator.geolocation)
-    //       navigator.geolocation.getCurrentPosition(
-    //         (pos) => {
-    //           //Save current latitude and longitude
-    //           this.location.hasPermission = true
-    //           this.location.pos = {
-    //             lat: pos.coords.latitude,
-    //             lng: pos.coords.longitude
-    //           }
-    //
-    //           //Search address
-    //           let geocoder = new google.maps.Geocoder()
-    //           let location = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude)
-    //           geocoder.geocode({'location': location},
-    //             (results, status) => {
-    //               if (status == 'OK') this.location.address = results[0].formatted_address
-    //             }
-    //           )
-    //
-    //           //Load Map
-    //           this.loadMap()
-    //           resolve(pos)
-    //         },
-    //         () => {//Failed response
-    //           this.location = {pos: false, address: 'No location available', hasPermission: false}
-    //           resolve(false)
-    //         },
-    //         {timeout: 60000}
-    //       );
-    //   })
-    // },
-    // //Get active shift
+    async getCurrentLocation() {
+      let currentLocation = await this.$helper.getCurrentPosition()
+      if (currentLocation) {
+        //Set location to shift
+        this.currentLocation = {
+          latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude
+        }
+        //Set location map
+        this.mapMarket = {
+          lat: currentLocation.coords.latitude,
+          lng: currentLocation.coords.longitude
+        }
+      }
+    },
+    //Get active shift
     getActiveShift() {
       return new Promise((resolve, reject) => {
         this.loading = true
         //Request params
-        let requestParams = {params: {filter: {noCheckout: true, field: "checkin_by"}}}
+        let requestParams = {
+          refresh: true,
+          params: {filter: {noCheckout: true, field: "checkin_by"}}
+        }
         let userId = this.$store.state.quserAuth.userId
         //Request
         this.$crud.show("apiRoutes.qcheckin.shifts", userId, requestParams).then(response => {
-          console.warn("----test" , typeof response.data, response.data)
-
           if (typeof response.data == "object") {
-            console.warn("---------")
-            this.activeShift = this.$clone(response.data)
+            this.activeShift = {
+              ...this.$clone(response.data),
+              checkinAt: this.$moment().format(response.data.checkinAt)
+            }
             this.comment.text = response.data.options.comment || null
+            this.startChronometer()//Start chromometer
           }
-
-          console.warn(this.activeShift)
           this.loading = false
-
           resolve(response.data)
-        }).catch(error => () => {
-          console.error(error)
+        }).catch(error => {
           this.loading = false
-          reject(console.warn("----error"), error)
+          reject(error)
         })
+      })
+    },
+    //Create new shift
+    async createShift() {
+      this.loading = true
+      let requestData = {options: {}, geoLocation: {}}
+
+      //Set current location to checkin
+      if (this.currentLocation) requestData.geoLocation = {checkin: this.$clone(this.currentLocation)}
+      //Request
+      this.$crud.create('apiRoutes.qcheckin.checkin', requestData).then(response => {
+        this.activeShift = this.$clone(response.data)
+        this.startChronometer()
+        this.loading = false
+      }).catch(error => {
+        this.loading = false
       })
     },
     //Start chronometer
     startChronometer() {
-      this.loading = true
       if (this.activeShift) {
-        console.warn("<<<<<<<<<<<<startChronometer>>>>>>>>>>>>",)
-
-        this.time.ss = this.activeShift.diff.s
-        this.time.mm = this.activeShift.diff.i
-        this.time.hh = this.activeShift.diff.h
+        this.time.ss = this.$clone(this.activeShift.diff.s)
+        this.time.mm = this.$clone(this.activeShift.diff.i)
+        this.time.hh = this.$clone(this.activeShift.diff.h)
 
         this.time.text = (this.time.hh == 0 ? '00' : this.time.hh < 10 ? '0' + this.time.hh : this.time.hh)
           + ":" +
@@ -207,9 +206,8 @@ export default {
           + ":" +
           (this.time.ss == 0 ? '00' : this.time.ss < 10 ? '0' + this.time.ss : this.time.ss)
         this.control = setInterval(this.timer, 1000);
-
         //Emit start chronometer
-        this.$emit('checking')
+        this.$emit('checkin')
       }
     },
     //Interval Timer
@@ -220,13 +218,11 @@ export default {
       if (this.activeShift.diff.s == 60) {
         this.activeShift.diff.s = 0
         this.activeShift.diff.i++;
-
       }
       if (this.activeShift.diff.i == 60) {
         this.activeShift.diff.i = 0
         this.activeShift.diff.h++
       }
-
       ss = this.$clone(this.activeShift.diff.s)
       mm = this.$clone(this.activeShift.diff.i)
       hh = this.$clone(this.activeShift.diff.h)
@@ -240,57 +236,32 @@ export default {
       if (hh < 10) {
         hh = "0" + hh;
       }
-
       this.time.text = hh + ":" + mm + ":" + ss
     },
-    //Initialize map
-    loadMap() {
-      setTimeout(() => {
-        //Map options
-        let mapOptions = {
-          zoom: 14,
-          center: this.location.pos,
-          mapTypeControl: false,
-          streetViewControl: false,
-        }
-
-        //Init Map
-        let mapObject = new google.maps.Map(document.getElementById('mapChecking'), mapOptions);
-        //Set market
-        let mapMarker = new google.maps.Marker({map: mapObject, position: this.location.pos});
-      }, 500)
-    },
-    //Create new shift
-    createShift() {
-      this.loading = true
-      //Request data
-      let requestData = {
-        geoLocation: {checking: this.location.pos},
-        options: {address: {checking: this.location.address}}
+    //Send comment
+    sendComment() {
+      if (this.activeShift) {
+        this.loading = true
+        //Request data
+        let requestData = {options: {...this.activeShift.options, comment: this.comment.text || 'No comments'}}
+        //Request
+        this.$crud.update('apiRoutes.qcheckin.shifts', this.activeShift.id, requestData).then(response => {
+          this.loading = false
+        }).catch(error => this.loading = false)
       }
-      //Request
-      this.$crud.create('api.checking.checking', requestData).then(response => {
-        this.activeShift = response.data
-        this.sendComment() //Send comment
-        this.startChronometer()
-        this.loading = false
-      }).catch(error => this.loading = false)
     },
     //End shift
-    endShift() {
-      this.activeShift = false
-      this.sendComment() //Send comment
-      return clearInterval(this.control);
+    async endShift() {
+      this.loading = true
       //Request Params
       let requestParams = {params: {filter: {checkout: true}}}
       //Request Data
-      let requestData = this.activeShift
-      //Set checkout geoLocation
-      requestData.geoLocation = {...requestData.geoLocation, checkout: this.location.pos}
-      //Set checkout address
-      requestData.options.address = {...requestData.options.address, checkout: this.location.address}
+      let requestData = this.$clone(this.activeShift)
+      //Set current location to checkout
+      if (this.currentLocation) requestData.geoLocation.checkout = this.$clone(this.currentLocation)
+
       //Request
-      this.$crud.update('api.checking.checkout', requestData.id, requestData, requestParams).then(response => {
+      this.$crud.update('apiRoutes.qcheckin.checkout', requestData.id, requestData, requestParams).then(response => {
         this.activeShift = false
         clearInterval(this.control);
         this.$emit('checkout')
@@ -298,25 +269,11 @@ export default {
         this.loading = false
       }).catch(error => this.loading = false)
     },
-    //Send comment
-    sendComment() {
-      if (this.activeShift) {
-        this.loading = true
-        //Request data
-        let requestData = {
-          options: {...this.activeShift.options, comment: this.comment.text || 'No comments'}
-        }
-        //Request
-        this.$crud.update('api.checking.shifts', this.activeShift.id, requestData).then(response => {
-          this.loading = false
-        }).catch(error => this.loading = false)
-      }
-    }
   }
 }
 </script>
 <style lang="stylus">
-#checkinggComponent
+#checkinComponent
   #chronometerContent
     background-color $grey-2
     position relative
@@ -332,6 +289,10 @@ export default {
       right 0
       margin auto
       border-radius 50%
+      z-index: 5000;
+
+    button
+      z-index: 5000;
 
     #iconButton
       top 15px
