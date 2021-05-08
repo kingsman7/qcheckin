@@ -57,9 +57,8 @@
     <!--Actions-->
     <div class="text-center absolute-bottom q-my-md">
       <!--My shifts-->
-      <q-btn unelevated color="green" rounded no-caps icon="fas fa-user-clock"
+      <q-btn unelevated color="green" rounded no-caps :label="$tr('qcheckin.sidebar.Shifts')" icon="fas fa-user-clock"
              :to="{name : 'qcheckin.admin.shifts.index'}">
-        {{ this.$tr('qcheckin.sidebar.Shifts') }}
       </q-btn>
     </div>
   </div>
