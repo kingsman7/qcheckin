@@ -14,7 +14,7 @@ export default {
         entityName: config("main.qcheckin.entityNames.shifts"),
         apiRoute: 'apiRoutes.qcheckin.shifts',
         permission: 'icheckin.shifts',
-        extraFormFields: false,
+        extraFormFields: 'icheckin.crud-fields.shifts',
         create: false,
         read: {
           columns: [
