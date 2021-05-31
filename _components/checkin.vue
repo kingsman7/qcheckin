@@ -17,7 +17,8 @@
       <!--Button actions chronometer-->
       <div class="text-center">
         <!--Button start chronometer-->
-        <q-btn @click="createShift" class="cursor-pointer" round color="green" size="28px" :loading="loading" v-if="!activeShift">
+        <q-btn @click="createShift" class="cursor-pointer" round color="green" size="28px" :loading="loading"
+               v-if="!activeShift">
           <q-icon id="iconButton" name="fas fa-play" size="25px" class="q-pa-xs q-mb-xs full-width"/>
           <label style="font-size: 12px"></label>
         </q-btn>
@@ -58,7 +59,7 @@
     <div class="text-center absolute-bottom q-my-md">
       <!--My shifts-->
       <q-btn unelevated color="green" rounded no-caps :label="$tr('qcheckin.sidebar.Shifts')" icon="fas fa-user-clock"
-             :to="{name : 'qcheckin.admin.shifts.index'}">
+             :to="{name : 'qcheckin.main.shifts.index'}">
       </q-btn>
     </div>
   </div>
@@ -200,10 +201,10 @@ export default {
         this.time.hh = this.$clone(this.activeShift.diff.h)
 
         this.time.text = (this.time.hh == 0 ? '00' : this.time.hh < 10 ? '0' + this.time.hh : this.time.hh)
-          + ":" +
-          (this.time.mm == 0 ? '00' : this.time.mm < 10 ? '0' + this.time.mm : this.time.mm)
-          + ":" +
-          (this.time.ss == 0 ? '00' : this.time.ss < 10 ? '0' + this.time.ss : this.time.ss)
+            + ":" +
+            (this.time.mm == 0 ? '00' : this.time.mm < 10 ? '0' + this.time.mm : this.time.mm)
+            + ":" +
+            (this.time.ss == 0 ? '00' : this.time.ss < 10 ? '0' + this.time.ss : this.time.ss)
         this.control = setInterval(this.timer, 1000);
         //Emit start chronometer
         this.$emit('checkin')
