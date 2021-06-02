@@ -17,10 +17,8 @@
       <!--Button actions chronometer-->
       <div class="text-center">
         <!--Button start chronometer-->
-        <q-btn @click="createShift" class="cursor-pointer" round color="green" size="28px" :loading="loading"
-               v-if="!activeShift">
-          <q-icon id="iconButton" name="fas fa-play" size="25px" class="q-pa-xs q-mb-xs full-width"/>
-          <label style="font-size: 12px"></label>
+        <q-btn v-if="!activeShift" :loading="loading" @click="createShift" round color="green" size="23px"
+               icon="fas fa-play" class="cursor-pointer q-pa-xs">
         </q-btn>
         <!--End shift-->
         <q-btn color="negative" class="q-mx-xs" size="28px" round :loading="loading" v-else @click="endShift">

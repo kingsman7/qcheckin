@@ -20,16 +20,16 @@ export default {
           columns: [
             //Id
             {name: 'id', label: this.$tr('ui.form.id'), field: 'id', style: 'width: 50px'},
+            //clocked In By
+            {
+              name: 'checkinBy', label: this.$tr('qcheckin.sidebar.clockedInBy'),
+              field: row => row.checkinBy ? row.checkinBy.fullName : "-", align: 'left'
+            },
             // Period Elapsed
             {
               name: 'periodElapsed', label: this.$tr('qcheckin.sidebar.periodElapsed'),
               format: val => val ? `${val.h}:${val.i}:${val.s}` : '-',
               field: 'diff', align: 'center'
-            },
-            //clocked In By
-            {
-              name: 'checkinBy', label: this.$tr('qcheckin.sidebar.clockedInBy'),
-              field: row => row.checkinBy ? row.checkinBy.fullName : "-", align: 'left'
             },
             //clocked In At
             {
@@ -40,7 +40,7 @@ export default {
             //Clocked Out At
             {
               name: 'checkoutByFullName', align: 'left', label: this.$tr('qcheckin.sidebar.clockedOutAt'),
-              field: row => row.checkinBy ? row.checkinBy.fullName : "-"
+              field: row => row.checkoutBy ? row.checkoutBy.fullName : "-"
             },
             // clocked In At
             {
@@ -69,6 +69,16 @@ export default {
             {name: 'actions', label: this.$tr('ui.form.actions'), align: 'left'},
           ],
           requestParams: {},
+          filters: {
+            date: true,
+            repId: {
+              type: 'select',
+              loadOptions: {
+                apiRoute: 'apiRoutes.quser.users',
+                select: {label: 'fullName', id: 'id'},
+              },
+            },
+          },
           actions: [
             {
               color: 'warning',
