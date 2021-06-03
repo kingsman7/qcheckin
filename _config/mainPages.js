@@ -11,14 +11,7 @@ export default {
     title: 'qcheckin.sidebar.Shifts',
     icon: 'fas fa-user-clock',
     subHeader: {
-      refresh: true,
-      export: {
-        title: 'qcheckin.sidebar.Shifts',
-        icon: 'fas fa-user-clock',
-        moduleName: "Icheckin",
-        exportName: "ShiftsExport",
-        fileName: "Reporte_Turnos"
-      }
+      refresh: true
     }
   },
 }
