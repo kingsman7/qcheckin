@@ -73,6 +73,9 @@ export default {
             date: true,
             repId: {
               type: 'select',
+              props: {
+                label: this.$tr('ui.label.user')
+              },
               loadOptions: {
                 apiRoute: 'apiRoutes.quser.users',
                 select: {label: 'fullName', id: 'id'},
