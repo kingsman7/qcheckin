@@ -27,7 +27,7 @@ export default {
             },
             // Period Elapsed
             {
-              name: 'periodElapsed', label: this.$tr('qcheckin.sidebar.periodElapsed'),
+              name: 'periodElapsed', label: `${this.$tr ("ui.label.time")} (h : m : s)`,
               format: val => val ? `${val.h}:${val.i}:${val.s}` : '-',
               field: 'diff', align: 'center'
             },
