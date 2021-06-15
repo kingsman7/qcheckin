@@ -203,7 +203,7 @@ export default {
             (this.time.mm == 0 ? '00' : this.time.mm < 10 ? '0' + this.time.mm : this.time.mm)
             + ":" +
             (this.time.ss == 0 ? '00' : this.time.ss < 10 ? '0' + this.time.ss : this.time.ss)
-        this.control = setInterval(this.timer, 1000);
+        this.control = setInterval(this.timer(), 1000);
         //Emit start chronometer
         this.$emit('checkin')
       }
