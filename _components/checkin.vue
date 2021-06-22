@@ -21,7 +21,7 @@
                icon="fas fa-play" class="cursor-pointer q-pa-xs">
         </q-btn>
         <!--End shift-->
-        <q-btn color="negative" class="q-mx-xs" size="28px" round :loading="loading" v-else @click="endShift">
+        <q-btn color="red" class="q-mx-xs" size="28px" round :loading="loading" v-else @click="endShift">
           <q-icon id="iconButton" name="fas fa-stop" size="25px" class="q-pa-xs q-mb-xs full-width"/>
           <label class="cursor-pointer" style="font-size: 12px">{{ this.$tr('ui.label.close') }}</label>
         </q-btn>
