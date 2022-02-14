@@ -8,7 +8,7 @@ export default {
     crud: import('@imagina/qcheckin/_crud/shifts'),
     page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
-    title: 'qcheckin.sidebar.Shifts',
+    title: 'icheckin.cms.sidebar.Shifts',
     icon: 'fas fa-user-clock',
     subHeader: {
       refresh: true

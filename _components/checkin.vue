@@ -8,7 +8,7 @@
         <q-icon color="grey-6" name="fas fa-map-marked-alt" size="80px"/>
         <div class="q-mt-md">
           <q-icon name="fas fa-exclamation-triangle" color="warning"/>
-          {{ this.$tr('qcheckin.sidebar.locationAddress') }}
+          {{ this.$tr('icheckin.cms.sidebar.locationAddress') }}
         </div>
       </div>
     </div>
@@ -23,7 +23,7 @@
         <!--End shift-->
         <q-btn color="red" class="q-mx-xs" size="28px" round :loading="loading" v-else @click="endShift">
           <q-icon id="iconButton" name="fas fa-stop" size="25px" class="q-pa-xs q-mb-xs full-width"/>
-          <label class="cursor-pointer" style="font-size: 12px">{{ this.$tr('ui.label.close') }}</label>
+          <label class="cursor-pointer" style="font-size: 12px">{{ this.$tr('isite.cms.label.close') }}</label>
         </q-btn>
       </div>
       <!--Shift Information-->
@@ -56,7 +56,7 @@
     <!--Actions-->
     <div class="text-center absolute-bottom q-my-md">
       <!--My shifts-->
-      <q-btn unelevated color="green" rounded no-caps :label="$tr('qcheckin.sidebar.Shifts')" icon="fas fa-user-clock"
+      <q-btn unelevated color="green" rounded no-caps :label="$tr('icheckin.cms.sidebar.Shifts')" icon="fas fa-user-clock"
              :to="{name : 'qcheckin.main.shifts.index'}">
       </q-btn>
     </div>
@@ -107,7 +107,7 @@ export default {
           value: '',
           type: 'input',
           props: {
-            label: `${this.$tr('ui.form.comment')}`,
+            label: `${this.$tr('isite.cms.form.comment')}`,
             type: 'textarea',
             rows: "3",
             icon: "fas fa-comment-dots",
@@ -119,7 +119,7 @@ export default {
     locationDescription() {
       if (this.currentLocation)
         return `Lat: ${this.currentLocation.latitude}, Lng: ${this.currentLocation.longitude}`
-      else return this.$tr('qcheckin.sidebar.noLocation')
+      else return this.$tr('icheckin.cms.sidebar.noLocation')
     }
   },
   methods: {

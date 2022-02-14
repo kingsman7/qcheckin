@@ -19,54 +19,54 @@ export default {
         read: {
           columns: [
             //Id
-            {name: 'id', label: this.$tr('ui.form.id'), field: 'id', style: 'width: 50px'},
+            {name: 'id', label: this.$tr('isite.cms.form.id'), field: 'id', style: 'width: 50px'},
             //clocked In By
             {
-              name: 'checkinBy', label: this.$tr('qcheckin.sidebar.clockedInBy'),
+              name: 'checkinBy', label: this.$tr('icheckin.cms.sidebar.clockedInBy'),
               field: row => row.checkinBy ? row.checkinBy.fullName : "-", align: 'left'
             },
             // Period Elapsed
             {
-              name: 'periodElapsed', label: `${this.$tr ("ui.label.time")} (h : m : s)`,
+              name: 'periodElapsed', label: `${this.$tr ("isite.cms.label.time")} (h : m : s)`,
               format: val => val ? `${val.h}:${val.i}:${val.s}` : '-',
               field: 'diff', align: 'center'
             },
             //clocked In At
             {
-              name: 'clockedInAt', label: this.$tr('qcheckin.sidebar.clockedInAt'),
+              name: 'clockedInAt', label: this.$tr('icheckin.cms.sidebar.clockedInAt'),
               format: val => val ? this.$trd(val, {type: 'long'}) : '-',
               align: 'left', field: 'checkinAt'
             },
             //Clocked Out At
             {
-              name: 'checkoutByFullName', align: 'left', label: this.$tr('qcheckin.sidebar.clockedOutAt'),
+              name: 'checkoutByFullName', align: 'left', label: this.$tr('icheckin.cms.sidebar.clockedOutAt'),
               field: row => row.checkoutBy ? row.checkoutBy.fullName : "-"
             },
             // clocked In At
             {
-              name: 'checkoutAt', label: this.$tr('qcheckin.sidebar.clockedInOut'), field: 'checkoutAt',
+              name: 'checkoutAt', label: this.$tr('icheckin.cms.sidebar.clockedInOut'), field: 'checkoutAt',
               format: val => val ? this.$trd(val, {type: 'long'}) : '-', align: 'left'
             },
             //Clocked Out At
             {
-              name: 'comment', label: `${this.$tr('qcheckin.sidebar.commet')}`, align: 'left',
+              name: 'comment', label: `${this.$tr('icheckin.cms.sidebar.commet')}`, align: 'left',
               field: 'options', classes: 'ellipsis', style: 'max-width : 150px',
               format: val => val && val.comment ? val.comment : "-"
             },
             //Initial location checkin
             {
-              name: 'geoLocationCheckin', field: 'geoLocation', label: this.$tr('qcheckin.sidebar.geoLocationCheckin'),
+              name: 'geoLocationCheckin', field: 'geoLocation', label: this.$tr('icheckin.cms.sidebar.geoLocationCheckin'),
               format: row => row.checkin ? `Lat: ${row.checkin.latitude} | Lng: ${row.checkin.longitude}` : "-",
               align: 'left'
             },
             //Final location checkout
             {
-              name: 'geoLocationCheckout', label: this.$tr('qcheckin.sidebar.geoLocationCheckout'),
+              name: 'geoLocationCheckout', label: this.$tr('icheckin.cms.sidebar.geoLocationCheckout'),
               format: row => row.checkout ? `Lat: ${row.checkout.latitude} | Lng: ${row.checkout.longitude}` : "-",
               align: 'left', field: 'geoLocation'
             },
             //Action
-            {name: 'actions', label: this.$tr('ui.form.actions'), align: 'left'},
+            {name: 'actions', label: this.$tr('isite.cms.form.actions'), align: 'left'},
           ],
           requestParams: {},
           filters: {
@@ -74,7 +74,7 @@ export default {
             repId: {
               type: 'select',
               props: {
-                label: this.$tr('ui.label.user')
+                label: this.$tr('isite.cms.label.user')
               },
               loadOptions: {
                 apiRoute: 'apiRoutes.quser.users',
@@ -86,7 +86,7 @@ export default {
             {
               color: 'warning',
               icon: 'fas fa-stop',
-              tooltip: this.$tr('ui.label.close'),
+              tooltip: this.$tr('isite.cms.label.close'),
               format: field => {
                 return {
                   vIf: field.checkoutAt ? false : true
@@ -105,7 +105,7 @@ export default {
           ]
         },
         update: {
-          title: this.$tr('qcheckin.sidebar.updateShift'),
+          title: this.$tr('icheckin.cms.sidebar.updateShift'),
           requestParams: {}
         },
         delete: true,
@@ -117,9 +117,9 @@ export default {
             value: '',
             type: 'fullDate',
             props: {
-              label: `${this.$tr('qcheckin.sidebar.clockedInAt')}*`,
+              label: `${this.$tr('icheckin.cms.sidebar.clockedInAt')}*`,
               rules: [
-                val => !!val || this.$tr('ui.message.fieldRequired')
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
             },
           },
@@ -127,9 +127,9 @@ export default {
             value: '',
             type: 'fullDate',
             props: {
-              label: `${this.$tr('qcheckin.sidebar.clockedInOut')}*`,
+              label: `${this.$tr('icheckin.cms.sidebar.clockedInOut')}*`,
               rules: [
-                val => !!val || this.$tr('ui.message.fieldRequired')
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
             },
           },
@@ -138,7 +138,7 @@ export default {
             type: 'input',
             isFakeField: true,
             props: {
-              label: `${this.$tr('ui.form.comment')}`,
+              label: `${this.$tr('isite.cms.form.comment')}`,
               type: 'textarea',
               rows: "4",
               debounce: 1500
