@@ -1,9 +1,21 @@
 <template>
   <div id="checkinComponent">
+    <!-- Title -->
+    <div class="row justify-between items-center q-pa-md">
+      <div class="text-subtitle1 row items-center">
+        <q-icon name="fas fa-clock" color="primary" size="20px" class="q-mr-sm"/>
+        <label>{{ $tr('icheckin.cms.sidebar.checkin', {capitalize: true}) }}</label>
+      </div>
+      <!-- Close icon -->
+      <q-icon name="fas fa-times" color="blue-grey" size="20px" class="cursor-pointer"
+              @click="$eventBus.$emit('toggleMasterDrawer', 'checkin')"/>
+    </div>
+    <!--Separator-->
+    <q-separator class="q-my-sm"/>
     <!--Map-->
     <open-map v-if="currentLocation" v-model="mapMarket" read-only height="200px"/>
     <!--Message map unavailable-->
-    <div v-else style="height: 200px; padding: 22px 0" class="bg-grey-4 text-center">
+    <div v-else style="height: 200px; padding: 22px 0" class="blue-grey text-center">
       <div class="q-px-md">
         <q-icon color="grey-6" name="fas fa-map-marked-alt" size="80px"/>
         <div class="q-mt-md">
@@ -28,7 +40,7 @@
       </div>
       <!--Shift Information-->
       <div v-if="startChronometer">
-        <div id="timer" class="q-box bg-grey-4 text-center text-blue-grey">
+        <div id="timer" class="q-box blue-grey text-center text-blue-grey">
           <!--Date-->
           <div class="q-body-1">
             {{ activeShift.checkinAt ? $trd(activeShift.checkinAt, {type: "long"}) : "" }}
