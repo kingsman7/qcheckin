@@ -1,7 +1,14 @@
-<template></template>
+<template>
+  <config-crud ref="configCrud" />
+</template>
 <script>
+import configCrud from "@imagina/qcrud/_config/CrudConfig"
+import checkinJson from "@imagina/qcheckin/_crud/shifts.json"
 //Component
 export default {
+  components:{
+    configCrud
+  },
   data() {
     return {
       crudId: this.$uid()
@@ -10,7 +17,8 @@ export default {
   computed: {
     crudData() {
       return {
-        crudId: this.crudId,
+        ...this.$refs.configCrud.getData(checkinJson),
+        /*crudId: this.crudId,
         entityName: config("main.qcheckin.entityNames.shifts"),
         apiRoute: 'apiRoutes.qcheckin.shifts',
         permission: 'icheckin.shifts',
@@ -108,7 +116,7 @@ export default {
           title: this.$tr('icheckin.cms.sidebar.updateShift'),
           requestParams: {}
         },
-        delete: true,
+        delete: true,*/
         //Form
         formLeft: {
           id: {value: ''},

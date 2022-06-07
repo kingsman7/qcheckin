@@ -1,0 +1,197 @@
+{
+  "crudId": "icheckin-crud-shifts",
+  "entityName": "shifts",
+  "apiRoute": "/icheckin/v1/shifts",
+  "permission": "icheckin.shifts",
+  "extraFormFields": "icheckin.crud-fields.shifts",
+  "create": false,
+  "read": {
+    "columns": [
+      {
+        "name": "id",
+        "label": {
+          "isTranslatable": "singular",
+          "value": "isite.cms.form.id"
+        },
+        "field": "id",
+        "sortable": false,
+        "style": "width: 50px"
+      },
+      {
+        "name": "checkinBy",
+        "label": {
+          "isTranslatable": "singular",
+          "value": "icheckin.cms.sidebar.clockedInBy"
+        },
+        "field":{
+          "type":"conditional",
+          "isVal": {
+            "value": "checkinBy",
+            "yes":"checkinBy.fullName",
+            "no":"-"
+          }
+        },
+        "align": "left",
+        "sortable": false
+      },
+      {
+        "name": "periodElapsed",
+        "label": {
+          "isTranslatable": "singular",
+          "value": "isite.cms.label.time",
+          "include":"(h: m : s)"
+        },
+        "field": "diff",
+        "align": "center",
+        "sortable": false,
+        "format":{
+          "type":"fulltime"
+        }
+      },
+      {
+        "name": "clockedInAt",
+        "label": {
+          "isTranslatable": "singular",
+          "value": "icheckin.cms.sidebar.clockedInAt"
+        },
+        "field": "checkinAt",
+        "align": "left",
+        "sortable": false,
+        "format":{
+          "type": "date",
+          "include": {
+            "type":"long"
+          }
+        }
+      },
+      {
+        "name": "checkoutByFullName",
+        "label": {
+          "isTranslatable": "singular",
+          "value": "icheckin.cms.sidebar.clockedOutAt"
+        },
+        "field":{
+          "type":"conditional",
+          "isVal": {
+            "value": "checkoutBy",
+            "yes":"checkoutBy.fullName",
+            "no":"-"
+          }
+        },
+        "align": "left",
+        "sortable": false
+      },
+      {
+        "name": "checkoutAt",
+        "label": {
+          "isTranslatable": "singular",
+          "value": "icheckin.cms.sidebar.clockedInOut"
+        },
+        "field": "checkoutAt",
+        "align": "left",
+        "sortable": false,
+        "format": {
+          "type": "date",
+          "include":{
+            "type":"long"
+          }
+        }
+      },
+      {
+        "name": "comment",
+        "label": {
+          "isTranslatable": "singular",
+          "value": "icheckin.cms.sidebar.commet"
+        },
+        "field": "options",
+        "align": "left",
+        "format":{
+          "type":"str",
+          "child":["comment"]
+        },
+        "sortable": false
+      },
+      {
+        "name": "geoLocationCheckin",
+        "label": {
+          "isTranslatable": "singular",
+          "value": "icheckin.cms.sidebar.geoLocationCheckin"
+        },
+        "field": "geoLocation",
+        "align": "left",
+        "format":{
+          "type":"geo",
+          "child":["checkout"]
+        },
+        "sortable": false
+      },
+      {
+        "name": "geoLocationCheckout",
+        "label": {
+          "isTranslatable": "singular",
+          "value": "icheckin.cms.sidebar.geoLocationCheckout"
+        },
+        "field": "geoLocation",
+        "align": "left",
+        "format":{
+          "type":"geo",
+          "child":["checkout"]
+        },
+        "sortable": false
+      },
+      {
+        "name": "actions",
+        "label": {
+          "isTranslatable": "singular",
+          "value": "isite.cms.form.actions"
+        },
+        "align": "left"
+      }
+    ]
+  },
+  "filters": [
+    {
+      "filterName": "filters",
+      "date":true,
+      "repId":{
+        "type": "select",
+        "props": {
+          "label": {
+            "isTranslatable": {
+              "type": "singular",
+              "value": "isite.cms.label.user"
+            }
+          },
+          "loadOptions": {
+            "apiRoute": "/profile/v1/users",
+            "select": {"label": "fullName", "id": "id"}
+          }
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "name":"",
+      "color":"warning",
+      "icon":"fas fa-stop",
+      "tooltip": "isite.cms.label.close",
+      "label": "",
+      "format":{
+        "type":"conditional",
+        "child":["checkoutAt"],
+        "if": false,
+        "not": true
+      },
+      "action": {
+        "type":"crud",
+        "method":"update", 
+        "child": "id"
+      }
+    }
+  ],
+  "update": {
+    "title":"icheckin.cms.sidebar.updateShift"
+  },
+  "delete": false
+}
